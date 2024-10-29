@@ -41,6 +41,7 @@ import com.iemr.ecd.dto.RequestCallAllocationDTO;
 import com.iemr.ecd.dto.supervisor.ResponseEligibleCallRecordsDTO;
 import com.iemr.ecd.service.call_conf_allocation.CallAllocationImpl;
 import com.iemr.ecd.utils.advice.exception_handler.CustomExceptionResponse;
+import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -152,7 +153,7 @@ public class CallAllocationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<ResponseEligibleCallRecordsDTO> getEligibleRecordsLanguageInfo(@PathVariable int psmId,
 			@PathVariable String phoneNoType, @PathVariable String recordType, @PathVariable String fDate,
-			@PathVariable String tDate, @PathVariable String preferredLanguage) throws Exception {
+			@PathVariable String tDate, @PathVariable String preferredLanguage) throws ECDException {
 		return new ResponseEntity<>(
 				callAllocationImpl.getEligibleRecordsLanguageInfo(psmId, phoneNoType, recordType, fDate, tDate, preferredLanguage), HttpStatus.OK);
 

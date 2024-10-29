@@ -6,4 +6,6 @@ public static final String UNALLOCATED = "unallocated";
 public static final String MOTHER = "Mother";
 public static final String CHILD = "Child";
 
+
+private Constants() {}
 }

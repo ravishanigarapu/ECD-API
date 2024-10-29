@@ -82,7 +82,8 @@ public class CallClosureImpl {
 
 			if (obj != null) {
 				obj.setIsOutbound(request.getIsOutbound());
-				//obj.setBeneficiaryRegId(request.getBeneficiaryRegId());
+				if(null != request.getBeneficiaryRegId())
+					obj.setBeneficiaryRegId(request.getBeneficiaryRegId());
 				if (request.getIsFurtherCallRequired() != null)
 					obj.setIsFurtherCallRequired(request.getIsFurtherCallRequired());
 

@@ -237,7 +237,7 @@ public class MastersController {
 	@Operation(summary = "Get agents by role id", description = "Desc - RCH data upload")
 	@GetMapping("/getAgentsByRoleIdAndPreferredLanguage/{roleId}/{preferredLanguage}")
 	public ResponseEntity<List<AgentsViewMaster>> getAgentsByRoleIdAndLanguage(
-			@RequestHeader(value = "Authorization") String Authorization, @PathVariable Integer roleId, @PathVariable String preferredLanguage) {
+			@RequestHeader(value = "Authorization") String authorization, @PathVariable Integer roleId, @PathVariable String preferredLanguage) {
 		return new ResponseEntity<>(masterServiceImpl.getAgentByRoleIdAndLanguage(roleId, preferredLanguage), HttpStatus.OK);
 
 	}
