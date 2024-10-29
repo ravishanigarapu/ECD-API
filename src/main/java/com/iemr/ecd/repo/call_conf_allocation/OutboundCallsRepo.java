@@ -213,7 +213,7 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.motherId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguagel ")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);
