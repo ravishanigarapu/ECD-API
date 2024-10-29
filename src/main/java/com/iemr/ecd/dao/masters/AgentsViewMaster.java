@@ -61,4 +61,9 @@ public class AgentsViewMaster {
 	@Column(name = "AgentID")
 	private String agentId;
 
+	@Column(name = "preferredlanguageid")
+	private String preferredLanguageId;
+	
+	@Column(name = "preferredlanguage")
+	private String preferredLanguage;
 }

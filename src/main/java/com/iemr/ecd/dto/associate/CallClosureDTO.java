@@ -71,6 +71,7 @@ public class CallClosureDTO {
 	
 	private Timestamp nextCallDate;
 	private Boolean isWrongNumber;
-    
+    private String preferredLanguage;
+    private String correctPhoneNumber;
 
 }

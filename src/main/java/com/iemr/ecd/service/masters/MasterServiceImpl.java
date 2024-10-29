@@ -235,4 +235,8 @@ public class MasterServiceImpl {
 			return genderRepo.findByDeleted(false);
 		}
 
+		public List<AgentsViewMaster> getAgentByRoleIdAndLanguage(Integer roleId, String preferredLanguage) {
+			return agentsViewMasterRepo.findByRoleIdAndLanguage(roleId, preferredLanguage);
+		}
+
 }

@@ -266,5 +266,7 @@ public class ChildRecord {
 	
 	@Column(name = "MotherID")
 	private Long motherMctsId;
-
+	
+	@Column(name = "preferredLanguage")
+	private String preferredLanguage;
 }

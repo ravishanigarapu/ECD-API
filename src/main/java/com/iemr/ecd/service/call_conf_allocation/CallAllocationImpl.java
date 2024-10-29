@@ -51,6 +51,7 @@ import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
+import com.iemr.ecd.utils.constants.Constants;
 
 import jakarta.transaction.Transactional;
 
@@ -301,7 +302,7 @@ public class CallAllocationImpl {
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getMotherRecordsForANM(pageable, "unallocated",
-				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
+				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
@@ -356,7 +357,7 @@ public class CallAllocationImpl {
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getChildRecordsForANM(pageable, "unallocated",
-				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
+				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
@@ -575,14 +576,27 @@ public class CallAllocationImpl {
 				Page<OutboundCalls> outboundCallsPage = null;
 
 				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-
-					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
-							pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-							tempFDateStamp, tempTDateStamp);
+					if (null != callAllocationDto.getRoleName()
+							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					} else {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp);
+					}
 				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
-					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(pageable,
-							callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(), tempFDateStamp,
-							tempTDateStamp);
+					if (null != callAllocationDto.getRoleName()
+							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					} else {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp);
+					}
 				}
 
 				List<Long> motherIds = new ArrayList<>();
@@ -647,11 +661,21 @@ public class CallAllocationImpl {
 				int cnt = 0;
 
 				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-					cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUser(callAllocationDto.getUserId(),
-							tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUserANM(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType(),callAllocationDto.getPreferredLanguage());
+					}else {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUser(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
+					}
 				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
-					cnt = outboundCallsRepo.getAllocatedRecordsCountChildUser(callAllocationDto.getUserId(),
-							tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountChildUserANM(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType(), callAllocationDto.getPreferredLanguage());
+					}else {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountChildUser(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
+					}
 				} else
 					throw new InvalidRequestException("Invalid recordType",
 							"please pass valid recordType - Mother / Child");
@@ -698,14 +722,25 @@ public class CallAllocationImpl {
 				Page<OutboundCalls> outboundCallsPage = null;
 
 				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					}else {
 					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
 							pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
 							tempFDateStamp, tempTDateStamp);
+					}
 				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(pageable,
+								callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(), tempFDateStamp,
+								tempTDateStamp,callAllocationDto.getPreferredLanguage() );
+					}else {
 					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(pageable,
 							callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(), tempFDateStamp,
 							tempTDateStamp);
+					}
 				}
 
 				if (outboundCallsPage != null && outboundCallsPage.getSize() > 0) {
@@ -917,5 +952,34 @@ public class CallAllocationImpl {
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}
+	}
+
+	public ResponseEligibleCallRecordsDTO getEligibleRecordsLanguageInfo(int psmId, String phoneNoType, String recordType, String fDate,
+			String tDate, String preferredLanguage) {
+		try {
+
+			Timestamp tempFDateStamp = null;
+			Timestamp tempTDateStamp = null;
+			if (fDate != null && tDate != null) {
+				tempFDateStamp = getTimestampFromString(fDate.split("T")[0].concat("T00:00:00+05:30"));
+				tempTDateStamp = getTimestampFromString(tDate.split("T")[0].concat("T23:59:59+05:30"));
+			} else
+				throw new InvalidRequestException("from date / to date is null");
+
+			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
+			int totalLowRisk = 0;
+			if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)) {
+				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
+						tempTDateStamp, phoneNoType, preferredLanguage);
+			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.CHILD)) {
+				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
+						tempTDateStamp, phoneNoType, preferredLanguage);
+			}
+			responseEligibleCallRecordsDTO.setTotalLowRiskRecord(totalLowRisk);
+			return responseEligibleCallRecordsDTO;
+		} catch (Exception e) {
+			throw new ECDException(e);
+		}
+
 	}
 }

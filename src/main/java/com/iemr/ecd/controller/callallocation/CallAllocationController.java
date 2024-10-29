@@ -140,5 +140,22 @@ public class CallAllocationController {
 		return new ResponseEntity<>(callAllocationImpl.insertRecordsInOutboundCalls(outboundCallsDTO), HttpStatus.OK);
 
 	}
+	
+	@GetMapping(value = "/getEligibleRecordsLanguageInfo/{psmId}/{phoneNoType}/{recordType}/{fDate}/{tDate}/{preferredLanguage}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch eligible Language records for allocation", description = "Desc - Fetch eligible records for allocation")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<ResponseEligibleCallRecordsDTO> getEligibleRecordsLanguageInfo(@PathVariable int psmId,
+			@PathVariable String phoneNoType, @PathVariable String recordType, @PathVariable String fDate,
+			@PathVariable String tDate, @PathVariable String preferredLanguage) throws Exception {
+		return new ResponseEntity<>(
+				callAllocationImpl.getEligibleRecordsLanguageInfo(psmId, phoneNoType, recordType, fDate, tDate, preferredLanguage), HttpStatus.OK);
+
+	}
 
 }
