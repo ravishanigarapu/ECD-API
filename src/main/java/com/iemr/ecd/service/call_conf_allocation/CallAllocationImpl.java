@@ -114,11 +114,11 @@ public class CallAllocationImpl {
 			Timestamp tempTDateStamp = null;
 			if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 				tempFDateStamp = getTimestampFromString(
-						callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+						callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 				tempTDateStamp = getTimestampFromString(
-						callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+						callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			List<MotherRecord> resultSet = motherRecordRepo.getMotherRecordForAllocation(tempFDateStamp, tempTDateStamp,
 					callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -205,11 +205,11 @@ public class CallAllocationImpl {
 			Timestamp tempTDateStamp = null;
 			if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 				tempFDateStamp = getTimestampFromString(
-						callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+						callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 				tempTDateStamp = getTimestampFromString(
-						callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+						callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			List<ChildRecord> resultSet = childRecordRepo.getChildRecordForAllocation(tempFDateStamp, tempTDateStamp,
 					callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -293,11 +293,11 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
@@ -347,11 +347,11 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
@@ -401,11 +401,11 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
@@ -453,11 +453,11 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getChildRecordsForMO(pageable, Constants.UNALLOCATED,
@@ -498,10 +498,10 @@ public class CallAllocationImpl {
 			Timestamp tempFDateStamp = null;
 			Timestamp tempTDateStamp = null;
 			if (fDate != null && tDate != null) {
-				tempFDateStamp = getTimestampFromString(fDate.split("T")[0].concat("T00:00:00+05:30"));
-				tempTDateStamp = getTimestampFromString(tDate.split("T")[0].concat("T23:59:59+05:30"));
+				tempFDateStamp = getTimestampFromString(fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+				tempTDateStamp = getTimestampFromString(tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
 			int totalIntroductoryRecord = 0;
@@ -562,11 +562,11 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				Pageable pageable = PageRequest.of(0, callAllocationDto.getNoOfCalls());
 
@@ -649,11 +649,11 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				int cnt = 0;
 
@@ -701,11 +701,11 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				if (callAllocationDto.getNoOfCalls() > 0)
 					totalRecordToAllocate = (callAllocationDto.getToUserIds().length)
@@ -959,10 +959,10 @@ public class CallAllocationImpl {
 			Timestamp tempFDateStamp = null;
 			Timestamp tempTDateStamp = null;
 			if (fDate != null && tDate != null) {
-				tempFDateStamp = getTimestampFromString(fDate.split("T")[0].concat("T00:00:00+05:30"));
-				tempTDateStamp = getTimestampFromString(tDate.split("T")[0].concat("T23:59:59+05:30"));
+				tempFDateStamp = getTimestampFromString(fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+				tempTDateStamp = getTimestampFromString(tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
 			int totalLowRisk = 0;
