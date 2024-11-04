@@ -953,7 +953,9 @@ public class CallAllocationImpl {
 	public ResponseEligibleCallRecordsDTO getEligibleRecordsLanguageInfo(int psmId, String phoneNoType, String recordType, String fDate,
 			String tDate, String preferredLanguage) {
 		try {
-
+			if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
+				throw new InvalidRequestException("preferred language is required");
+			}
 			Timestamp tempFDateStamp = null;
 			Timestamp tempTDateStamp = null;
 			if (fDate != null && tDate != null) {
