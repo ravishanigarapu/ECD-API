@@ -87,4 +87,9 @@ public interface ChildRecordRepo extends CrudRepository<ChildRecord, Long> {
 	@Transactional
 	@Query(" UPDATE ChildRecord SET isAllocated = false WHERE ecdIdNoChildId IN :childId ")
 	public int updateIsAllocatedFalse(@Param("childId") List<Long> childId);
+
+	@Modifying
+	@Transactional
+	@Query(" UPDATE ChildRecord SET preferredLanguage = :preferredLanguage WHERE ecdIdNoChildId = :childId ")
+	public int updatePreferredLanguage(@Param("preferredLanguage") String preferredLanguage,@Param("childId") Long childId);
 }

@@ -299,5 +299,7 @@ public class MotherRecord {
 	
 	@Column(name = "MotherID", insertable = true, updatable = false)
 	private Long motherMctsId;
-
+	
+	@Column(name = "preferredLanguage")
+	private String preferredLanguage;
 }

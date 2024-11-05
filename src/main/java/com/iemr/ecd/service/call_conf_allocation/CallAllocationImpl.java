@@ -51,6 +51,7 @@ import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
+import com.iemr.ecd.utils.constants.Constants;
 
 import jakarta.transaction.Transactional;
 
@@ -113,11 +114,11 @@ public class CallAllocationImpl {
 			Timestamp tempTDateStamp = null;
 			if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 				tempFDateStamp = getTimestampFromString(
-						callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+						callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 				tempTDateStamp = getTimestampFromString(
-						callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+						callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			List<MotherRecord> resultSet = motherRecordRepo.getMotherRecordForAllocation(tempFDateStamp, tempTDateStamp,
 					callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -145,7 +146,7 @@ public class CallAllocationImpl {
 						outboundCalls.setEcdCallType("introductory");
 						outboundCalls.setDisplayEcdCallType("introductory");
 						outboundCalls.setCallStatus("Open");
-						outboundCalls.setAllocationStatus("allocated");
+						outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 						outboundCalls.setAllocatedUserId(
 								callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 
@@ -204,11 +205,11 @@ public class CallAllocationImpl {
 			Timestamp tempTDateStamp = null;
 			if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 				tempFDateStamp = getTimestampFromString(
-						callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+						callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 				tempTDateStamp = getTimestampFromString(
-						callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+						callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			List<ChildRecord> resultSet = childRecordRepo.getChildRecordForAllocation(tempFDateStamp, tempTDateStamp,
 					callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -217,7 +218,7 @@ public class CallAllocationImpl {
 
 			int callCountPointer = 0;
 
-			if (resultSet != null && resultSet.size() > 0) {
+			if (resultSet != null && !resultSet.isEmpty()) {
 				List<Long> childIds = new ArrayList<>();
 				for (ChildRecord childRecord : resultSet) {
 
@@ -239,7 +240,7 @@ public class CallAllocationImpl {
 						outboundCalls.setEcdCallType("introductory");
 						outboundCalls.setDisplayEcdCallType("introductory");
 						outboundCalls.setCallStatus("Open");
-						outboundCalls.setAllocationStatus("allocated");
+						outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 						outboundCalls.setAllocatedUserId(
 								callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 
@@ -292,24 +293,24 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getMotherRecordsForANM(pageable, "unallocated",
-				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
+				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
 		int callCountPointer = 0;
-		if (outboundCallsList != null && outboundCallsList.size() > 0) {
+		if (!outboundCallsList.isEmpty()) {
 			for (OutboundCalls outboundCalls : outboundCallsList) {
 				try {
-					outboundCalls.setAllocationStatus("allocated");
+					outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 					outboundCalls.setAllocatedUserId(
 							callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 
@@ -317,7 +318,6 @@ public class CallAllocationImpl {
 
 					callCountPointer++;
 				} catch (Exception e) {
-					// TODO: handle exception
 					callCountPointer++;
 				}
 			}
@@ -347,16 +347,16 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getChildRecordsForANM(pageable, "unallocated",
-				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
+				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
@@ -364,7 +364,7 @@ public class CallAllocationImpl {
 		if (outboundCallsList != null && outboundCallsList.size() > 0) {
 			for (OutboundCalls outboundCalls : outboundCallsList) {
 				try {
-					outboundCalls.setAllocationStatus("allocated");
+					outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 					outboundCalls.setAllocatedUserId(
 							callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 
@@ -401,11 +401,11 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
@@ -415,17 +415,16 @@ public class CallAllocationImpl {
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
 		int callCountPointer = 0;
-		if (outboundCallsList != null && outboundCallsList.size() > 0) {
+		if (!outboundCallsList.isEmpty()) {
 			for (OutboundCalls outboundCalls : outboundCallsList) {
 				try {
-					outboundCalls.setAllocationStatus("allocated");
+					outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 					outboundCalls.setAllocatedUserId(
 							callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 					outboundCalls.setCallAttemptNo(0);
 
 					callCountPointer++;
 				} catch (Exception e) {
-					// TODO: handle exception
 					callCountPointer++;
 				}
 			}
@@ -454,29 +453,28 @@ public class CallAllocationImpl {
 		Timestamp tempTDateStamp = null;
 		if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 			tempFDateStamp = getTimestampFromString(
-					callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+					callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 			tempTDateStamp = getTimestampFromString(
-					callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+					callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 		} else
-			throw new InvalidRequestException("from date / to date is null");
+			throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
-		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getChildRecordsForMO(pageable, "unallocated",
+		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getChildRecordsForMO(pageable, Constants.UNALLOCATED,
 				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
 		int callCountPointer = 0;
-		if (outboundCallsList != null && outboundCallsList.size() > 0) {
+		if (!outboundCallsList.isEmpty()) {
 			for (OutboundCalls outboundCalls : outboundCallsList) {
 				try {
-					outboundCalls.setAllocationStatus("allocated");
+					outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 					outboundCalls.setAllocatedUserId(
 							callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 					outboundCalls.setCallAttemptNo(0);
 					callCountPointer++;
 				} catch (Exception e) {
-					// TODO: handle exception
 					callCountPointer++;
 				}
 			}
@@ -500,10 +498,10 @@ public class CallAllocationImpl {
 			Timestamp tempFDateStamp = null;
 			Timestamp tempTDateStamp = null;
 			if (fDate != null && tDate != null) {
-				tempFDateStamp = getTimestampFromString(fDate.split("T")[0].concat("T00:00:00+05:30"));
-				tempTDateStamp = getTimestampFromString(tDate.split("T")[0].concat("T23:59:59+05:30"));
+				tempFDateStamp = getTimestampFromString(fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+				tempTDateStamp = getTimestampFromString(tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
-				throw new InvalidRequestException("from date / to date is null");
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
 			int totalIntroductoryRecord = 0;
@@ -511,17 +509,17 @@ public class CallAllocationImpl {
 			int totalHighRisk = 0;
 			int totalAllocated = 0;
 
-			if (recordType != null && recordType.equalsIgnoreCase("Mother")) {
+			if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)) {
 
 				totalIntroductoryRecord = motherRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
 
-				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR("unallocated", psmId, tempFDateStamp,
+				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR(Constants.UNALLOCATED, psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
-				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR("unallocated", psmId, tempFDateStamp,
+				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR(Constants.UNALLOCATED, psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
 
-				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother("allocated", psmId, tempFDateStamp,
+				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother(Constants.ALLOCATED, psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
 
 			} else if (recordType != null && recordType.equalsIgnoreCase("Child")) {
@@ -564,25 +562,38 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				Pageable pageable = PageRequest.of(0, callAllocationDto.getNoOfCalls());
 
 				Page<OutboundCalls> outboundCallsPage = null;
 
 				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-
-					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
-							pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-							tempFDateStamp, tempTDateStamp);
+					if (null != callAllocationDto.getRoleName()
+							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					} else {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp);
+					}
 				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
-					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(pageable,
-							callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(), tempFDateStamp,
-							tempTDateStamp);
+					if (null != callAllocationDto.getRoleName()
+							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					} else {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
+								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp);
+					}
 				}
 
 				List<Long> motherIds = new ArrayList<>();
@@ -638,20 +649,30 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				int cnt = 0;
 
-				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-					cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUser(callAllocationDto.getUserId(),
-							tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
-				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
-					cnt = outboundCallsRepo.getAllocatedRecordsCountChildUser(callAllocationDto.getUserId(),
-							tempFDateStamp, tempTDateStamp, "open", callAllocationDto.getPhoneNoType());
+				if (callAllocationDto.getRecordType().equalsIgnoreCase(Constants.MOTHER)) {
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase(Constants.ANM)) {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUserANM(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType(),callAllocationDto.getPreferredLanguage());
+					}else {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUser(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType());
+					}
+				} else if (callAllocationDto.getRecordType().equalsIgnoreCase(Constants.CHILD)) {
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase(Constants.ANM)) {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountChildUserANM(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType(), callAllocationDto.getPreferredLanguage());
+					}else {
+						cnt = outboundCallsRepo.getAllocatedRecordsCountChildUser(callAllocationDto.getUserId(),
+								tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType());
+					}
 				} else
 					throw new InvalidRequestException("Invalid recordType",
 							"please pass valid recordType - Mother / Child");
@@ -680,11 +701,11 @@ public class CallAllocationImpl {
 				Timestamp tempTDateStamp = null;
 				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
 					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 				} else
-					throw new InvalidRequestException("from date / to date is null");
+					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 				if (callAllocationDto.getNoOfCalls() > 0)
 					totalRecordToAllocate = (callAllocationDto.getToUserIds().length)
@@ -697,31 +718,41 @@ public class CallAllocationImpl {
 
 				Page<OutboundCalls> outboundCallsPage = null;
 
-				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-
+				if (callAllocationDto.getRecordType().equalsIgnoreCase(Constants.MOTHER)) {
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase(Constants.ANM)) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+								pageable, callAllocationDto.getUserId(), Constants.OPEN, callAllocationDto.getPhoneNoType(),
+								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+					}else {
 					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
-							pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+							pageable, callAllocationDto.getUserId(), Constants.OPEN, callAllocationDto.getPhoneNoType(),
 							tempFDateStamp, tempTDateStamp);
-				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
+					}
+				} else if (callAllocationDto.getRecordType().equalsIgnoreCase(Constants.CHILD)) {
+					if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase(Constants.ANM)) {
+						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(pageable,
+								callAllocationDto.getUserId(), Constants.OPEN, callAllocationDto.getPhoneNoType(), tempFDateStamp,
+								tempTDateStamp,callAllocationDto.getPreferredLanguage() );
+					}else {
 					outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(pageable,
-							callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(), tempFDateStamp,
+							callAllocationDto.getUserId(), Constants.OPEN, callAllocationDto.getPhoneNoType(), tempFDateStamp,
 							tempTDateStamp);
+					}
 				}
 
 				if (outboundCallsPage != null && outboundCallsPage.getSize() > 0) {
 					List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
 					int callCountPointer = 0;
-					if (outboundCallsList != null && outboundCallsList.size() > 0) {
+					if (outboundCallsList != null && !outboundCallsList.isEmpty()) {
 						for (OutboundCalls outboundCalls : outboundCallsList) {
 							try {
-								outboundCalls.setAllocationStatus("allocated");
+								outboundCalls.setAllocationStatus(Constants.ALLOCATED);
 								outboundCalls.setAllocatedUserId(callAllocationDto.getToUserIds()[callCountPointer
 										/ callAllocationDto.getNoOfCalls()]);
 
 								callCountPointer++;
 							} catch (Exception e) {
-								// TODO: handle exception
 								callCountPointer++;
 							}
 						}
@@ -917,5 +948,36 @@ public class CallAllocationImpl {
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}
+	}
+
+	public ResponseEligibleCallRecordsDTO getEligibleRecordsLanguageInfo(int psmId, String phoneNoType, String recordType, String fDate,
+			String tDate, String preferredLanguage) {
+		try {
+			if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
+				throw new InvalidRequestException("preferred language is required");
+			}
+			Timestamp tempFDateStamp = null;
+			Timestamp tempTDateStamp = null;
+			if (fDate != null && tDate != null) {
+				tempFDateStamp = getTimestampFromString(fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+				tempTDateStamp = getTimestampFromString(tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
+			} else
+				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
+
+			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
+			int totalLowRisk = 0;
+			if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)) {
+				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
+						tempTDateStamp, phoneNoType, preferredLanguage);
+			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.CHILD)) {
+				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
+						tempTDateStamp, phoneNoType, preferredLanguage);
+			}
+			responseEligibleCallRecordsDTO.setTotalLowRiskRecord(totalLowRisk);
+			return responseEligibleCallRecordsDTO;
+		} catch (Exception e) {
+			throw new ECDException(e);
+		}
+
 	}
 }

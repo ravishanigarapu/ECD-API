@@ -50,6 +50,7 @@ import com.iemr.ecd.repository.ecd.BencallRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
 
+import io.netty.util.internal.StringUtil;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -81,7 +82,8 @@ public class CallClosureImpl {
 
 			if (obj != null) {
 				obj.setIsOutbound(request.getIsOutbound());
-				obj.setBeneficiaryRegId(request.getBeneficiaryRegId());
+				if(null != request.getBeneficiaryRegId())
+					obj.setBeneficiaryRegId(request.getBeneficiaryRegId());
 				if (request.getIsFurtherCallRequired() != null)
 					obj.setIsFurtherCallRequired(request.getIsFurtherCallRequired());
 
@@ -90,6 +92,9 @@ public class CallClosureImpl {
 
 				if (request.getIsCallVerified() != null) {
 					obj.setIsCallVerified(request.getIsCallVerified());
+				}
+				if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
+					obj.setPhoneNo(request.getCorrectPhoneNumber());
 				}
 				obj.setIsCallAnswered(request.getIsCallAnswered());
 
@@ -207,7 +212,14 @@ public class CallClosureImpl {
 					outboundCallsRepo.stickyMotherAgentAllocation(request.getObCallId(), request.getMotherId(),
 							request.getUserId());
 			}
-
+			if (null != request.getPreferredLanguage()) {
+				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
+					motherRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getMotherId());
+				}
+				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
+					childRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getChildId());
+				}
+			}
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("response", "Call closed successfully");
 			return new Gson().toJson(responseMap);

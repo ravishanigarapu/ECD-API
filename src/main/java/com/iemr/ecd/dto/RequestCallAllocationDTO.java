@@ -58,5 +58,6 @@ public class RequestCallAllocationDTO {
 	private String createdBy;
 
 	private Boolean isIntroductory;
+	private String preferredLanguage;
 
 }

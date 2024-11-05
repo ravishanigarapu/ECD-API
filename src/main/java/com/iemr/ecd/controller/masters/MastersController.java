@@ -234,5 +234,11 @@ public class MastersController {
 		return new ResponseEntity<>(masterServiceImpl.getGenders(), HttpStatus.OK);
 
 	}
+	@Operation(summary = "Get agents by role id and preferred language", description = "Fetches agents filtered by both role ID and their preferred language setting")
+	@GetMapping("/getAgentsByRoleIdAndPreferredLanguage/{roleId}/{preferredLanguage}")
+	public ResponseEntity<List<AgentsViewMaster>> getAgentsByRoleIdAndLanguage(
+			@RequestHeader(value = "Authorization") String authorization, @PathVariable Integer roleId, @PathVariable String preferredLanguage) {
+		return new ResponseEntity<>(masterServiceImpl.getAgentByRoleIdAndLanguage(roleId, preferredLanguage), HttpStatus.OK);
 
+	}
 }
