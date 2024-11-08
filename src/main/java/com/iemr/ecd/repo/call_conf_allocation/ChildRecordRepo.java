@@ -92,4 +92,9 @@ public interface ChildRecordRepo extends CrudRepository<ChildRecord, Long> {
 	@Transactional
 	@Query(" UPDATE ChildRecord SET preferredLanguage = :preferredLanguage WHERE ecdIdNoChildId = :childId ")
 	public int updatePreferredLanguage(@Param("preferredLanguage") String preferredLanguage,@Param("childId") Long childId);
+
+	@Modifying
+	@Transactional
+	@Query(" UPDATE ChildRecord SET phoneNo = :correctPhoneNumber WHERE ecdIdNoChildId = :childId ")
+	public void updateCorrectPhoneNumber(@Param("correctPhoneNumber") String correctPhoneNumber,@Param("childId") Long childId);
 }
