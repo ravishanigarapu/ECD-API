@@ -49,6 +49,7 @@ import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.repository.ecd.BencallRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
+import com.iemr.ecd.utils.constants.Constants;
 
 import io.netty.util.internal.StringUtil;
 import jakarta.transaction.Transactional;
@@ -93,9 +94,7 @@ public class CallClosureImpl {
 				if (request.getIsCallVerified() != null) {
 					obj.setIsCallVerified(request.getIsCallVerified());
 				}
-				if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
-					obj.setPhoneNo(request.getCorrectPhoneNumber());
-				}
+				
 				obj.setIsCallAnswered(request.getIsCallAnswered());
 
 				if (request.getReasonForCallNotAnswered() != null)
@@ -141,7 +140,6 @@ public class CallClosureImpl {
 				callConfigurationDetails = callConfigurationRepo.getCallConfiguration(request.getPsmId());
 				CallConfiguration callConfigurationDetail = null;
 				if (callConfigurationDetails != null) {
-					// if()
 					callConfigurationDetail = callConfigurationDetails.get(0);
 				}
 
@@ -161,13 +159,11 @@ public class CallClosureImpl {
 					}
 
 				}
-
+				
 				if (request.getIsHrp() != null) {
 					callObj.setIsHighRisk(request.getIsHrp());
 				}
-//				else {
-//					callObj.setIsHrni(request.getIsHrni());
-//				}
+
 				if (request.getIsHrni() != null) {
 					callObj.setIsHrni(request.getIsHrni());
 				}
@@ -183,8 +179,13 @@ public class CallClosureImpl {
 					}
 
 				}
-
-				callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
+				if (obj.getReceivedRoleName() != null && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
+						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty()) {
+					callObj.setAllocationStatus(Constants.OPEN);
+					callObj.setCallAttemptNo(0);
+				} else {
+					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
+				}
 
 				outboundCallsRepo.save(callObj);
 			} else
@@ -218,6 +219,14 @@ public class CallClosureImpl {
 				}
 				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
 					childRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getChildId());
+				}
+			}
+			if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
+				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
+					motherRecordRepo.updateCorrectPhoneNumber(request.getCorrectPhoneNumber(), callObj.getMotherId());
+				}
+				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
+					childRecordRepo.updateCorrectPhoneNumber(request.getCorrectPhoneNumber(), callObj.getChildId());
 				}
 			}
 			Map<String, Object> responseMap = new HashMap<>();
