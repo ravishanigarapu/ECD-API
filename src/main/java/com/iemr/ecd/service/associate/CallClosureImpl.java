@@ -162,6 +162,10 @@ public class CallClosureImpl {
 				
 				if (request.getIsHrp() != null) {
 					callObj.setIsHighRisk(request.getIsHrp());
+					if (null != obj.getReceivedRoleName() && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
+							|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
+						callObj.setCallStatus("Open");
+					}
 				}
 
 				if (request.getIsHrni() != null) {
