@@ -162,6 +162,10 @@ public class CallClosureImpl {
 				
 				if (request.getIsHrp() != null) {
 					callObj.setIsHighRisk(request.getIsHrp());
+					if (null != obj.getReceivedRoleName() && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
+							|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
+						callObj.setCallStatus(Constants.OPEN);
+					}
 				}
 
 				if (request.getIsHrni() != null) {
@@ -171,11 +175,11 @@ public class CallClosureImpl {
 				if (request.getNextAttemptDate() != null) {
 					Timestamp nextCallDate = getTimestampFromString(request.getNextAttemptDate());
 					callObj.setNextCallDate(nextCallDate);
-					callObj.setCallStatus("Open");
+					callObj.setCallStatus(Constants.OPEN);
 
 				} else {
 					if ((callObj.getCallAttemptNo() + 1) >= callConfigurationDetail.getNoOfAttempts()) {
-						callObj.setCallStatus("Completed");
+						callObj.setCallStatus(Constants.COMPLETED);
 					}
 
 				}
