@@ -33,7 +33,8 @@ import com.iemr.ecd.dao.masters.AgentsViewMaster;
 @Repository
 public interface AgentsViewMasterRepo extends CrudRepository<AgentsViewMaster, Integer> {
 	
-	List<AgentsViewMaster> findByRoleId(Integer roleId);
+	@Query("SELECT DISTINCT a FROM AgentsViewMaster a WHERE a.roleId = :roleId")
+	List<AgentsViewMaster> findByRoleId(@Param("roleId") Integer roleId);
 
 	@Query(value = "SELECT v from AgentsViewMaster AS v WHERE v.roleId = :roleId AND v.preferredLanguage = :preferredLanguage")
 	List<AgentsViewMaster> findByRoleIdAndLanguage(@Param("roleId") Integer roleId, @Param("preferredLanguage") String preferredLanguage);

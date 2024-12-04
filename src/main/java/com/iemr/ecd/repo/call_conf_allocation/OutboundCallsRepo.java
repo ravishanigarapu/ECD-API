@@ -99,11 +99,11 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	// un-allocated, mother high risk,
 	@Query(value = " SELECT count(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
+			+ " t.psmId=:psmId AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false ")
 	int getMotherUnAllocatedCountHR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
-			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
+			@Param("phoneNoType") String phoneNoType);
 
 	// un-allocated, child high risk,
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
