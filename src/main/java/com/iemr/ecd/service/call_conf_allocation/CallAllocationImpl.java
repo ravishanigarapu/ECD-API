@@ -410,7 +410,7 @@ public class CallAllocationImpl {
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
 		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getMotherRecordsForMO(pageable, "unallocated",
-				callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp);
+				callAllocationDto.getPsmId());
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
