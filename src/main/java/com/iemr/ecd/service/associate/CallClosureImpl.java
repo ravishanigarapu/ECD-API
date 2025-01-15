@@ -129,12 +129,16 @@ public class CallClosureImpl {
 
 				if (request.getIsWrongNumber() != null)
 					obj.setIsWrongNumber(request.getIsWrongNumber());
+				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered())) {
+					obj.setIsFurtherCallRequired(true);
+					obj.setIsCallDisconnected(true);
+				}
 
 				bencallRepo.save(obj);
 			}
 
 			OutboundCalls callObj = outboundCallsRepo.findByObCallId(request.getObCallId());
-
+			boolean isMaxcallsAttempted=false;
 			if (callObj != null) {
 
 				callConfigurationDetails = callConfigurationRepo.getCallConfiguration(request.getPsmId());
@@ -162,10 +166,12 @@ public class CallClosureImpl {
 				
 				if (request.getIsHrp() != null) {
 					callObj.setIsHighRisk(request.getIsHrp());
-					if (null != obj.getReceivedRoleName() && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
-							|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
-						callObj.setCallStatus(Constants.OPEN);
-					}
+					/*
+					 * if (null != obj.getReceivedRoleName() &&
+					 * (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) ||
+					 * obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
+					 * callObj.setCallStatus(Constants.OPEN); }
+					 */
 				}
 
 				if (request.getIsHrni() != null) {
@@ -179,6 +185,7 @@ public class CallClosureImpl {
 
 				} else {
 					if ((callObj.getCallAttemptNo() + 1) >= callConfigurationDetail.getNoOfAttempts()) {
+						isMaxcallsAttempted=true;
 						callObj.setCallStatus(Constants.COMPLETED);
 					}
 
@@ -189,6 +196,9 @@ public class CallClosureImpl {
 					callObj.setCallAttemptNo(0);
 				} else {
 					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
+				}
+				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
+					callObj.setCallStatus(Constants.OPEN);
 				}
 
 				outboundCallsRepo.save(callObj);
@@ -208,6 +218,14 @@ public class CallClosureImpl {
 				}
 
 			}
+			if(null != obj.getIsFurtherCallRequired() && !obj.getIsFurtherCallRequired()) {
+				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
+					outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForChild(callObj.getChildId(), obj.getIsFurtherCallRequired());
+				} else if (callObj.getMotherId() != null && callObj.getChildId() == null) {
+					outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForMother(callObj.getMotherId(), obj.getIsFurtherCallRequired());
+				}
+			}
+			
 			// sticky agents
 			if (request.getIsStickyAgentRequired() != null && request.getIsStickyAgentRequired()) {
 				if (request.getChildId() != null)

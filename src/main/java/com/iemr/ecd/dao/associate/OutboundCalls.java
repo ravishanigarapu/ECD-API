@@ -117,4 +117,6 @@ public class OutboundCalls {
 	@Column(name = "phoneNumberType")
 	private String phoneNumberType;
 
+	@Column(name = "isFurtherCallRequired")
+	private Boolean isFurtherCallRequired;
 }
