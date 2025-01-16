@@ -218,11 +218,23 @@ public class CallClosureImpl {
 				}
 
 			}
-			if(null != obj.getIsFurtherCallRequired() && !obj.getIsFurtherCallRequired()) {
+			if (null != obj.getIsFurtherCallRequired() && !obj.getIsFurtherCallRequired()) {
 				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
-					outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForChild(callObj.getChildId(), obj.getIsFurtherCallRequired());
+					try {
+						outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForChild(callObj.getChildId(),
+								obj.getIsFurtherCallRequired());
+					} catch (Exception e) {
+						logger.error("Failed to update isFurtherCallRequired for child: " + callObj.getChildId(), e);
+						throw new ECDException("Failed to update isFurtherCallRequired upcoming calls for child" + e);
+					}
 				} else if (callObj.getMotherId() != null && callObj.getChildId() == null) {
-					outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForMother(callObj.getMotherId(), obj.getIsFurtherCallRequired());
+					try {
+						outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForMother(callObj.getMotherId(),
+								obj.getIsFurtherCallRequired());
+					} catch (Exception e) {
+						logger.error("Failed to update isFurtherCallRequired for mother: " + callObj.getMotherId(), e);
+						throw new ECDException("Failed to update isFurtherCallRequired upcoming calls for mother" + e);
+					}
 				}
 			}
 			
